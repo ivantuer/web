@@ -1,0 +1,40 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#field {
+  padding: 20px;
+  transition: all 0.3s;
+  border: 2px solid #efefef;
+  outline: none;
+  width: 60vw;
+  height: 80vh;
+}
+#field:focus {
+  border: 2px solid #bbbbbb;
+}
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.action-bar-btn {
+  cursor: pointer;
+  box-sizing: border-box;
+  height: 30px;
+  min-width: 30px;
+  margin-right: 10px;
+}
+
+.upper {
+  text-transform: uppercase !important;
+}
+
+.lower {
+  text-transform: lowercase !important;
+}
