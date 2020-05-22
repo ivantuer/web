@@ -117,56 +117,245 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"index.js":[function(require,module,exports) {
-var getSelectedTextNode = window.getSelection;
-var boldBtn = document.getElementById("bold");
-var italicBtn = document.getElementById("italic");
-var underBtn = document.getElementById("underline");
-var color = document.getElementById("color");
-var upperCase = document.getElementById("uppercase");
-var lowerCase = document.getElementById("lowercase");
-color.addEventListener("change", function (e) {
-  document.execCommand("foreColor", false, e.target.value);
-});
-console.log("init");
-boldBtn.addEventListener("click", function (e) {
-  document.execCommand("bold");
-});
-italicBtn.addEventListener("click", function (e) {
-  document.execCommand("italic");
-});
-underBtn.addEventListener("click", function (e) {
-  document.execCommand("styleWithCSS", false, true);
-  document.execCommand("foreColor", false, "rgba(0,0,0,0.5)");
-});
-upperCase.addEventListener("click", function (e) {
-  setsC("span", "upper");
-});
-lowerCase.addEventListener("click", function () {
-  setsC("span", "lower");
-});
+})({"js/model.js":[function(require,module,exports) {
+"use strict";
 
-function setsC(tag, className) {
-  tags(tag, className);
-}
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
-function tags(tag, className) {
-  var ele = document.createElement(tag);
-  ele.classList.add(className);
-  wrap(ele);
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function wrap(tags) {
-  var select = window.getSelection();
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-  if (select.rangeCount) {
-    var range = select.getRangeAt(0).cloneRange();
-    range.surroundContents(tags);
-    select.removeAllRanges();
-    select.addRange(range);
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var WYSIWYGModel = /*#__PURE__*/function () {
+  function WYSIWYGModel() {
+    _classCallCheck(this, WYSIWYGModel);
   }
-}
-},{}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+  _createClass(WYSIWYGModel, [{
+    key: "italic",
+    value: function italic() {
+      document.execCommand("italic");
+    }
+  }, {
+    key: "bold",
+    value: function bold() {
+      document.execCommand("bold");
+    }
+  }, {
+    key: "underscore",
+    value: function underscore() {
+      document.execCommand("underline");
+    }
+  }, {
+    key: "color",
+    value: function color(e) {
+      document.execCommand("styleWithCSS", false, true);
+      document.execCommand("foreColor", false, e.target.value);
+    }
+  }, {
+    key: "case",
+    value: function _case() {
+      var sel, range;
+
+      if (window.getSelection) {
+        sel = window.getSelection();
+
+        if (sel.rangeCount) {
+          range = sel.getRangeAt(0);
+          var textToReplace = "".concat(range.cloneContents().textContent);
+
+          if (textToReplace === textToReplace.toUpperCase()) {
+            textToReplace = textToReplace.toLowerCase();
+          } else {
+            textToReplace = textToReplace.toUpperCase();
+          }
+
+          range.deleteContents();
+          range.insertNode(document.createTextNode(textToReplace));
+        }
+      } else if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+
+        var _textToReplace = range.cloneContents();
+
+        if (_textToReplace === _textToReplace.toUpperCase()) {
+          _textToReplace = _textToReplace.toLowerCase();
+        } else {
+          _textToReplace = _textToReplace.toUpperCase();
+        }
+
+        range.text = _textToReplace;
+      }
+    }
+  }]);
+
+  return WYSIWYGModel;
+}();
+
+var _default = new WYSIWYGModel();
+
+exports.default = _default;
+},{}],"js/controller.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _model = _interopRequireDefault(require("./model"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var WYSIWYGController = /*#__PURE__*/function () {
+  function WYSIWYGController() {
+    _classCallCheck(this, WYSIWYGController);
+
+    this.WYSIWYGModel = _model.default;
+  }
+
+  _createClass(WYSIWYGController, [{
+    key: "toggleItalic",
+    value: function toggleItalic(e) {
+      _model.default.italic(e);
+    }
+  }, {
+    key: "toggleBold",
+    value: function toggleBold(e) {
+      _model.default.bold(e);
+    }
+  }, {
+    key: "toggleUnderScore",
+    value: function toggleUnderScore(e) {
+      console.log(e);
+
+      _model.default.underscore(e);
+    }
+  }, {
+    key: "changeColor",
+    value: function changeColor(e) {
+      _model.default.color(e);
+    }
+  }, {
+    key: "toggleCase",
+    value: function toggleCase(e) {
+      _model.default.case(e);
+    }
+  }]);
+
+  return WYSIWYGController;
+}();
+
+var _default = new WYSIWYGController();
+
+exports.default = _default;
+},{"./model":"js/model.js"}],"js/view.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _controller = _interopRequireDefault(require("./controller"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var WYSIWYGView = /*#__PURE__*/function () {
+  function WYSIWYGView(_ref) {
+    var italicBtn = _ref.italicBtn,
+        boldBtn = _ref.boldBtn,
+        underBtn = _ref.underBtn,
+        colorBtn = _ref.colorBtn,
+        caseBtn = _ref.caseBtn,
+        field = _ref.field,
+        countSpan = _ref.countSpan;
+
+    _classCallCheck(this, WYSIWYGView);
+
+    this.italicBtn = italicBtn;
+    this.boldBtn = boldBtn;
+    this.underBtn = underBtn;
+    this.colorBtn = colorBtn;
+    this.caseBtn = caseBtn;
+    this.field = field;
+    this.countSpan = countSpan;
+    this.WordCountWorker = new Worker("/wordCountWorker.9431f181.js");
+    this.initAllListeners();
+    this.WordCountWorker.postMessage(field.innerText);
+  }
+
+  _createClass(WYSIWYGView, [{
+    key: "triggerWordCount",
+    value: function triggerWordCount(e) {
+      var text = e.target.innerText;
+      this.WordCountWorker.postMessage(text);
+    }
+  }, {
+    key: "renderWordCount",
+    value: function renderWordCount(_ref2) {
+      var data = _ref2.data;
+      this.countSpan.innerText = data;
+    }
+  }, {
+    key: "initAllListeners",
+    value: function initAllListeners() {
+      this.italicBtn.addEventListener("click", _controller.default.toggleItalic);
+      this.boldBtn.addEventListener("click", _controller.default.toggleBold);
+      this.underBtn.addEventListener("click", _controller.default.toggleUnderScore);
+      this.colorBtn.addEventListener("change", _controller.default.changeColor);
+      this.caseBtn.addEventListener("click", _controller.default.toggleCase);
+      this.WordCountWorker.addEventListener("message", this.renderWordCount.bind(this));
+      this.field.addEventListener("input", this.triggerWordCount.bind(this));
+    }
+  }]);
+
+  return WYSIWYGView;
+}();
+
+var _default = WYSIWYGView;
+exports.default = _default;
+},{"./controller":"js/controller.js","./wordCountWorker.js":[["wordCountWorker.9431f181.js","js/wordCountWorker.js"],"wordCountWorker.9431f181.js.map","js/wordCountWorker.js"]}],"index.js":[function(require,module,exports) {
+"use strict";
+
+var _view = _interopRequireDefault(require("./js/view"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var boldBtn = document.getElementById("boldBtn");
+var italicBtn = document.getElementById("italicBtn");
+var underBtn = document.getElementById("underBtn");
+var colorBtn = document.getElementById("colorBtn");
+var caseBtn = document.getElementById("caseBtn");
+var field = document.getElementById("field");
+var countSpan = document.getElementById("countSpan");
+var a = new _view.default({
+  boldBtn: boldBtn,
+  italicBtn: italicBtn,
+  underBtn: underBtn,
+  colorBtn: colorBtn,
+  caseBtn: caseBtn,
+  field: field,
+  countSpan: countSpan
+});
+},{"./js/view":"js/view.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -194,7 +383,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53595" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53759" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
